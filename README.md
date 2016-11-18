@@ -28,9 +28,9 @@ The cases are ```RawRepresentable``` meaning that case name can be represented a
 
 - Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extenion which encapsulate the stock functions from UIViewController, but instead now take an enum
 
-** Perform Segue **
+#### Perform Segue
 
-*** Previously
+***Previously
 
 ```
 performSegue(withIdentifier: "ProfileViewController", sender: sender)
