@@ -30,13 +30,13 @@ The cases are ```RawRepresentable``` meaning that case name can be represented a
 
 #### Perform Segue
 
-***Previously
+#####Previously
 
 ```
 performSegue(withIdentifier: "ProfileViewController", sender: sender)
 ```
 
-*** Now
+#####Now
 
 ```
 self.performSegue( .ProfileViewController, sender: nil)
