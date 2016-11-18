@@ -30,21 +30,21 @@ The cases are ```RawRepresentable``` meaning that case name can be represented a
 
 #### Perform Segue
 
-#####Previously
+##### Previously
 
 ```
 performSegue(withIdentifier: "ProfileViewController", sender: sender)
 ```
 
-#####Now
+##### Now
 
 ```
 self.performSegue( .ProfileViewController, sender: nil)
 ```
 
-** Prepare Segue  
+#### Prepare Segue  
 
-*** Previously
+##### Previously
 
 ```
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -61,7 +61,7 @@ self.performSegue( .ProfileViewController, sender: nil)
     }
 ```
 
-*** Now
+##### Now
 
 ```
   override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
