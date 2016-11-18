@@ -11,12 +11,12 @@ This concept can be extended to address similiar issues with cell reuse id's etc
 
 ### Usage
 
-1. The view controller that you are navigating away FROM i.e the parent view controller, should conform to the protocol.
+- The view controller that you are navigating away FROM i.e the parent view controller, should conform to the protocol.
 
 ```
 class MyViewController: UIViewController, SeguePerformable {
 ```
-2. Next the view controller will now need to declare an enum of type ```SegueIdentifier```
+- Next the view controller will now need to declare an enum of type ```SegueIdentifier```
 
 ```
    enum SegueIdentifier : String {
@@ -26,18 +26,58 @@ class MyViewController: UIViewController, SeguePerformable {
 ```
 The cases are ```RawRepresentable``` meaning that case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard.
 
-3.
+- Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extenion which encapsulate the stock functions from UIViewController, but instead now take an enum
 
+** Perform Segue
 
-
-
-When you need to use your mock data file simply call the ```serializedJSON:from:``` function by passing in the file name (excluding the file extension)
+*** Previously
 
 ```
- guard let responseData = serializedJSON(from: "mockResponse") else {  return }
+performSegue(withIdentifier: "ProfileViewController", sender: sender)
 ```
 
-Currently only supports JSON
+*** Now
+
+```
+self.performSegue( .ProfileViewController, sender: nil)
+```
+
+** Prepare Segue  
+
+*** Previously
+
+```
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let segueID = segue.identifier
+        if segueID == "ProfileViewController" {
+            
+            guard let profileViewController = segue.destination as? ProfileViewController else { return }
+            profileViewController.user = self.user
+        } else  if segueID == "GalleryViewController" {
+         //bla bla
+        
+        }
+    }
+```
+
+*** Now
+
+```
+  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        //protocols make this look so sweet!
+        
+        switch segueIdentifier(for: segue) {
+        case .ProfileViewController:
+            guard let profileViewController = segue.destination as? ProfileViewController else { return }
+            profileViewController.user = self.user
+            break
+        case .GalleryViewController:
+            break
+        }
+    }
+```
 
 ### Requirements
 
