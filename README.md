@@ -39,7 +39,7 @@ performSegue(withIdentifier: "ProfileViewController", sender: sender)
 ##### Now
 
 ```
-self.performSegue( .ProfileViewController, sender: nil)
+performSegue( .ProfileViewController, sender: nil)
 ```
 
 #### Prepare Segue  
