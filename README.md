@@ -24,7 +24,7 @@ class MyViewController: UIViewController, SeguePerformable {
         case GalleryViewController
     }
 ```
-The cases are ```RawRepresentable``` meaning that case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard.
+The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard.
 
 - Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extenion which encapsulate the stock functions from UIViewController, but instead now take an enum
 
