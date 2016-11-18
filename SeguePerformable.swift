@@ -20,7 +20,6 @@ extension SeguePerformable where Self: UIViewController, SegueIdentifier.RawValu
     SegueIdentifier enum rather than raw string
     */
     func performSegue(_ segueIdentifier: SegueIdentifier, sender: AnyObject?) {
-        
         performSegue(withIdentifier: segueIdentifier.rawValue, sender: sender)
     }
     
