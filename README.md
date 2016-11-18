@@ -16,7 +16,7 @@ This concept can be extended to address similiar issues with cell reuse id's etc
 ```
 class MyViewController: UIViewController, SeguePerformable {
 ```
-- Next the view controller will now need to declare an enum of type ```SegueIdentifier```
+- Next the view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
 
 ```
    enum SegueIdentifier : String {
