@@ -11,30 +11,36 @@ import UIKit
 
 protocol SeguePerformable {
     associatedtype SegueIdentifier: RawRepresentable
+    typealias SegueCompletionBlock = (UIStoryboardSegue, UIViewController) -> Void
 }
 
 extension SeguePerformable where Self: UIViewController, SegueIdentifier.RawValue == String {
-    
-    /**
-    Shadows the stock view controller performSegue function, instead taking in a
-    SegueIdentifier enum rather than raw string
-    */
-    func performSegue(_ segueIdentifier: SegueIdentifier, sender: AnyObject?) {
-        performSegue(withIdentifier: segueIdentifier.rawValue, sender: sender)
+
+    func performSegue(_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock? = nil) {
+        performSegue(withIdentifier: segueIdentifier.rawValue, sender: completion)
     }
-    
+
+    func senderIsSegueCompletionBlock(_ sender: Any?, _ segue: UIStoryboardSegue) -> Bool {
+
+        guard let completion = sender as? SegueCompletionBlock else {
+            return false
+        }
+        completion(segue, segue.destination)
+        return true
+    }
+
     /**
-    Fetches the segue id for a given storyboard and returns its as an enum value
-    */
+     Fetches the segue id for a given storyboard and returns its as an enum value
+     */
     func segueIdentifier(for segue: UIStoryboardSegue) -> SegueIdentifier {
-        
+
         guard
             let identifier = segue.identifier,
             let segueIdentifier = SegueIdentifier(rawValue: identifier)
             else {
-                fatalError("Invalid segue identifier \(segue.identifier)")
+                fatalError("Invalid segue identifier \(String(describing: segue.identifier))")
         }
-        
+
         return segueIdentifier
     }
 }
