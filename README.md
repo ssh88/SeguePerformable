@@ -68,7 +68,7 @@ Previously to display a view controller and override a parameter you would do th
 Triggering a segue:
 ```
 func viewProfile() {
-  performSegue(withIdentifier: "ProfileViewController", sender: sender)
+  performSegue(withIdentifier: "ProfileViewController", sender: user)
 }
 ```
 
