@@ -14,21 +14,30 @@ This idea for this was initially based on a the tutorial by Natasha Murashev aka
 
 Every year since Xcode introduced storyboards, Apple has heavily invested in the tech pushing a device agnostic mentality.
 
-With all the pros from dynamic cells, size classes and easy to setup navigation, it is pretty much a no brainer to use them (I see the eye rolls). Saying that, there has been one major feature missing that still has developers reminiscing about life before the UIStoryboard - Custom initialisers!
+With all the pros from dynamic cells, size classes and easy-to-setup navigation, it is pretty much a no brainer to use them (I see the eye rolls).
 
-What makes this an even more of a painful omission is the fact that if you want to override and default parameters before displaying your view controller you are forced to call ```prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```, then have to navigate through an ```if-else```, cast back down and finally cast back down your view controller. Not exactly a satisfying replacement for the previous one-liner custom init! That's not to mention the stringly typed api the Storyboards heavily promote.
+Saying that, there has been one major feature missing that still has developers reminiscing about life before the UIStoryboard - Custom initialisers!
+
+What makes this an even more of painful omission is the fact that if you want to override and default parameters before displaying your view controller you are forced to
+
+- call ```prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```
+- then navigate an ```if``` statment to find the correct id for your view controller
+- then finally cast back your view controller from the segues destination view controller.
+
+Not exactly a satisfying replacement for the previous one-liner custom init, and that's not to mention the stringly typed API the Storyboards heavily promote.
 
 That's where ```SeguePerformable``` comes in.
 
 The idea is twofold:
 
-- to limit the use of hard coded strings for Segue ID's and provide a clean and simple interface for working with them.
-- Create a block based api so that performing and preparing a segue are done in a single footprint.
+-  Replace the use of hard coded strings for Segue ID's with them enums.
+- Create a block based API so that performing and preparing a segue are done in a single footprint.
 
 ### Usage
 
 #### look ma! no strings!
 
+First lets look at how we replace strings with enums when dealing with segue id's.
 
 - The view controller that is initiating the navigating i.e. the parent view controller, should conform to the protocol.
 
@@ -37,22 +46,25 @@ class MyViewController: UIViewController, SeguePerformable {
 ```
 - Next the view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
 
+The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard (no avoiding this YET!).
+
 ```
    enum SegueIdentifier : String {
         case ProfileViewController
         case SettingsViewController
     }
 ```
-The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard (no avoiding this YET! - maybe checkout swiftGen).
 
-- Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extension which encapsulate the stock functions from UIViewController, but instead now take an enum
-
+Next we will look at how these enums are used to trigger segues.
 
 #### I just need some closure
 
+
+**Previously**
+
 Previously to display a view controller and override a parameter you would do the following
 
-call site:
+Triggering a segue:
 ```
 func viewProfile() {
   performSegue(withIdentifier: "ProfileViewController", sender: sender)
@@ -71,6 +83,7 @@ override :
         }
     }
 ```
+**Now**
 
 This has not been replaced with a simple call.
 
@@ -81,12 +94,11 @@ func viewProfile() {
                profileViewController.user = user
            }
 }
-
-Notice we no longer use a string as the segue identifier but a SegueIdentifier enum value. Also the ```sender:``` parameter is no longer needed as we can override our view controller parameters immediately.
-
 ```
 
-#### The Catch
+Notice we no longer use a string as the segue identifier but our new ```SegueIdentifier``` enum value.
+
+Also the ```sender:``` parameter is no longer needed as we can override our view controller parameters immediately.
 
 There is one caveat to get this working smoothly. In ```prepare(for:sender:)``` we have to include the following line:
 
@@ -100,7 +112,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       }
   }
 
-This checks if the sender if the completion block we passed in when calling our new ```performSegue``` function.
+This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function.
 
 ```
 
@@ -129,6 +141,51 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 The above example shows a view controller ```SettingsViewController``` which is an embedded container view.
 
 The line ```switch segueIdentifier(for: segue)``` creates a ```SegueIdentifier``` enum value from the UIStoryboardSegue, allowing us to now switch on the ```SegueIdentifier``` to determine which embedded segue triggered this call.
+
+#### Future Improvements
+
+One major improvement to ```SegueIdentifier``` would be for the destination view controller to already be recognised as the intended class type.
+
+As you can see below, currently we are required to manually cast the destination view controller
+
+```
+performSegue( .ProfileViewController) { (segue, destination) in
+    guard let profileViewController = destination as? ProfileViewController  else { return }
+}
+```
+
+This should easily be solved with generics by updating the protocol as so:
+
+
+**Change this**
+```
+typealias SegueCompletionBlock = (UIStoryboardSegue, UIViewController) -> Void
+```
+
+**To this**
+```
+typealias SegueCompletionBlock<T: UIViewController> = (UIStoryboardSegue, T) -> Void
+```
+
+**Change this**
+```
+func performSegue(_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock? = nil)
+```
+
+**To this**
+```
+func performSegue<T: UIViewController>(_ type: T.Type,_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock<T>? = nil)
+    }
+```
+
+This call site will then become:
+```
+
+```
+
+However the ```senderIsSegueCompletionBlock``` function will not recognise the ```SegueCompletionBlock``` if ```T``` is not of type ```UIViewController```. Even if ```T``` is a child of ```UIViewController```, swift doesnt successfully equate the two.
+
+If anyone knows how to overcome this, PLEASE RAISE A PULL REQUEST :)
 
 ### Requirements
 
