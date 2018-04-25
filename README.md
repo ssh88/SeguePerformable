@@ -39,12 +39,12 @@ The idea is twofold:
 
 First lets look at how we replace strings with enums when dealing with segue id's.
 
-- The view controller that is initiating the navigating i.e. the parent view controller, should conform to the protocol.
+Firstly the view controller that is initiating the navigating i.e. the parent view controller, should conform to the protocol.
 
 ```
 class MyViewController: UIViewController, SeguePerformable {
 ```
-- Next the view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
+The view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
 
 The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard (no avoiding this YET!).
 
