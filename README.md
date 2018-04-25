@@ -106,16 +106,15 @@ There is one caveat to get this working smoothly. In ```prepare(for:sender:)``` 
 ```
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
-      if senderIsSegueCompletionBlock(sender, segue) { return }
+   if senderIsSegueCompletionBlock(sender, segue) { return }
 
-      ...
-      ...
+   ...
+   ...
       
-  }
+}
+```
 
 This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function.
-
-```
 
 #### Embedded Segues / Container Views
 
