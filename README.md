@@ -1,17 +1,36 @@
 # SeguePerformable
-A simple swift protocol that stream lines the use of Segue ID's
+A simple swift protocol that
+
+- Allows Segue ID's to be referenced by enums rather than strings
+- Uses a closure api when triggering segues
 
 ## Overview
 
-This is based on the tutorial by Natasha Murashev aka Natasha The Robot, which can be found here: www.natashatherobot.com/protocol-oriented-segue-identifiers-swift/
+----------------------------------
+#### Note:
+This idea for this was initially based on a the tutorial by Natasha Murashev aka Natasha The Robot, which can be found here: www.natashatherobot.com/protocol-oriented-segue-identifiers-swift/
 
-The idea is to limit the use of hard coded strings for Segue ID's and provide a clean and simple interface for working with them.
+----------------------------------
 
-This concept can be extended to address similiar issues with cell reuse id's etc 
+Every year since Xcode introduced storyboards, Apple has heavily invested in the tech pushing a device agnostic mentality.
+
+With all the pros from dynamic cells, size classes and easy to setup navigation, it is pretty much a no brainer to use them (I see the eye rolls). Saying that, there has been one major feature missing that still has developers reminiscing about life before the UIStoryboard - Custom initialisers!
+
+What makes this an even more of a painful omission is the fact that if you want to override and default parameters before displaying your view controller you are forced to call ```prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```, then have to navigate through an ```if-else```, cast back down and finally cast back down your view controller. Not exactly a satisfying replacement for the previous one-liner custom init! That's not to mention the stringly typed api the Storyboards heavily promote.
+
+That's where ```SeguePerformable``` comes in.
+
+The idea is twofold:
+
+- to limit the use of hard coded strings for Segue ID's and provide a clean and simple interface for working with them.
+- Create a block based api so that performing and preparing a segue are done in a single footprint.
 
 ### Usage
 
-- The view controller that you are navigating away FROM i.e the parent view controller, should conform to the protocol.
+#### look ma! no strings!
+
+
+- The view controller that is initiating the navigating i.e. the parent view controller, should conform to the protocol.
 
 ```
 class MyViewController: UIViewController, SeguePerformable {
@@ -21,69 +40,101 @@ class MyViewController: UIViewController, SeguePerformable {
 ```
    enum SegueIdentifier : String {
         case ProfileViewController
-        case GalleryViewController
+        case SettingsViewController
     }
 ```
 The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard (no avoiding this YET! - maybe checkout swiftGen).
 
-- Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extenion which encapsulate the stock functions from UIViewController, but instead now take an enum
+- Now anytime you need to perform or prepare for a segue, you can use the functions defined in the protocol extension which encapsulate the stock functions from UIViewController, but instead now take an enum
 
-#### Perform Segue
 
-##### Previously
+#### I just need some closure
 
+Previously to display a view controller and override a parameter you would do the following
+
+call site:
 ```
-performSegue(withIdentifier: "ProfileViewController", sender: sender)
-```
-
-##### Now
-
-```
-performSegue( .ProfileViewController, sender: nil)
+func viewProfile() {
+  performSegue(withIdentifier: "ProfileViewController", sender: sender)
+}
 ```
 
-#### Prepare Segue  
-
-##### Previously
-
+override :
 ```
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        let segueID = segue.identifier
-        if segueID == "ProfileViewController" {
-            
+
+        if  segue.identifier == "ProfileViewController" {
             guard let profileViewController = segue.destination as? ProfileViewController else { return }
-            profileViewController.user = self.user
-        } else  if segueID == "GalleryViewController" {
+            profileViewController.user = user
+        } else if segueID == "SettingsViewController" {
          //bla bla
-        
         }
     }
 ```
 
-##### Now
+This has not been replaced with a simple call.
 
 ```
-  override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        //protocols make this look so sweet!
-        
-        switch segueIdentifier(for: segue) {
-        case .ProfileViewController:
-            guard let profileViewController = segue.destination as? ProfileViewController else { return }
-            profileViewController.user = self.user
-            break
-        case .GalleryViewController:
-            break
-        }
-    }
+func viewProfile() {
+    performSegue( .ProfileViewController) { (segue, destination) in
+               guard let profileViewController = destination as? ProfileViewController  else { return }
+               profileViewController.user = user
+           }
+}
+
+Notice we no longer use a string as the segue identifier but a SegueIdentifier enum value. Also the ```sender:``` parameter is no longer needed as we can override our view controller parameters immediately.
+
 ```
+
+#### The Catch
+
+There is one caveat to get this working smoothly. In ```prepare(for:sender:)``` we have to include the following line:
+
+```
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+      if senderIsSegueCompletionBlock(sender, segue) { return }
+
+      ...
+      ...
+      }
+  }
+
+This checks if the sender if the completion block we passed in when calling our new ```performSegue``` function.
+
+```
+
+#### Embedded Segues / Container Views
+
+```SeguePerformable``` is fully compatible with embedded segues & container views. In fact they also benefit from the syntax sugar of the ```SegueIdentifier``` enum as shown below
+
+```
+override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+
+      if senderIsSegueCompletionBlock(sender, segue) { return }
+
+      switch segueIdentifier(for: segue) {
+
+      case .SettingsViewController:
+          guard let settingsViewController = segue.destination as? SettingsViewController else { return }
+          self.settingsViewController = settingsViewController
+          break
+      default: break
+
+      }
+  }
+
+```
+
+The above example shows a view controller ```SettingsViewController``` which is an embedded container view.
+
+The line ```switch segueIdentifier(for: segue)``` creates a ```SegueIdentifier``` enum value from the UIStoryboardSegue, allowing us to now switch on the ```SegueIdentifier``` to determine which embedded segue triggered this call.
 
 ### Requirements
 
 - iOS 9.0+
-- Swift 3
-- Xcode 8
+- Swift 3+
+- Xcode 8+
 
 ### Integration
 
