@@ -31,7 +31,7 @@ That's where ```SeguePerformable``` comes in.
 The idea is twofold:
 
 -  Replace the use of hard coded strings for Segue ID's with enums.
-- Create a block based API so that performing and preparing a segue are done in a single footprint.
+- Create a block based API so that triggering a segue and overring the destination view controllers paramters are done in a single footprint.
 
 ### Usage
 
@@ -46,7 +46,7 @@ class MyViewController: UIViewController, SeguePerformable {
 ```
 The view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
 
-The cases are ```RawRepresentable``` which means that the case name can be represented as a string, therefore it is important that they are typed exactly as they have been defined in the storyboard (no avoiding this YET!).
+The enum cases will each be a represenation of a segue id created in the storyboard. The cases are ```RawRepresentable``` which means that the case name can be represented as a string. It is important that they are typed exactly as they have been defined in the storyboard (no avoiding this ... YET!).
 
 ```
    enum SegueIdentifier : String {
@@ -59,6 +59,7 @@ Next we will look at how these enums are used to trigger segues.
 
 #### I just need some closure
 
+Using the above ```SegueIdentifier``` enum, below we look at how triggering segues have been improved using closures.
 
 **Previously**
 
