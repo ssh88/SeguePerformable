@@ -179,12 +179,13 @@ func performSegue(_ segueIdentifier: SegueIdentifier, completion: SegueCompletio
 func performSegue<T: UIViewController>(_ type: T.Type,_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock<T>? = nil)
 ```
 
-This call site will then become:
+This call will now look like this:
 ```
 performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
 
 }
 ```
+The destination parameter will now already by of type ```ProfileViewController```, removing the need for the ```guard```.
 
 However the ```senderIsSegueCompletionBlock``` function will not recognise the ```SegueCompletionBlock``` if ```T``` is not of type ```UIViewController```. Even if ```T``` is a child of ```UIViewController```, swift doesnt successfully equate the two at runtime.
 
