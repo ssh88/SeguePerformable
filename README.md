@@ -31,7 +31,7 @@ That's where ```SeguePerformable``` comes in.
 The idea is twofold:
 
 -  Replace the use of hard coded strings for Segue ID's with enums.
-- Create a block based API so that triggering a segue and overriding the destination view controllers paramters are done in a single footprint.
+- Create a block based API so that triggering a segue and overriding the destination view controller is done in a single footprint, allowing for easier dependacy injection.
 
 ### Usage
 
