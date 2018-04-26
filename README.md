@@ -48,7 +48,7 @@ The view controller will now need to declare an enum named ```SegueIdentifier```
 
 The enum cases will each be a represenation of a segue id created in the storyboard. The cases are ```RawRepresentable``` which means that the case name can be represented as a string. It is important that they are typed exactly as they have been defined in the storyboard (no avoiding this ... YET!).
 
-```
+```swift
 enum SegueIdentifier : String {
      case ProfileViewController
      case SettingsViewController
@@ -66,14 +66,14 @@ Using the above ```SegueIdentifier``` enum, below we look at how triggering segu
 Previously to display a view controller and override a parameter you would do the following
 
 Triggering a segue:
-```
+```swift
 func viewProfile() {
   performSegue(withIdentifier: "ProfileViewController", sender: user)
 }
 ```
 
 override :
-```
+```swift
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
    if  segue.identifier == "ProfileViewController" {
       guard let profileViewController = segue.destination as? ProfileViewController else { return }
@@ -82,12 +82,12 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       //bla bla
    }
 }
-```
+```swift
 **Now**
 
 This has now been replaced with a simple call.
 
-```
+```swift
 func viewProfile() {
    performSegue( .ProfileViewController) { (segue, destination) in
       guard let profileViewController = destination as? ProfileViewController  else { return }
@@ -102,7 +102,7 @@ Also the ```sender:``` parameter is no longer needed as we can override our view
 
 There is one caveat to get this working smoothly. In ```prepare(for:sender:)``` we have to include the following line:
 
-```
+```swift
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
    if senderIsSegueCompletionBlock(sender, segue) { return }
 
@@ -117,7 +117,7 @@ This checks if the sender is the completion block we passed in when calling our 
 
 ```SeguePerformable``` is fully compatible with embedded segues & container views. In fact they also benefit from the syntax sugar of the ```SegueIdentifier``` enum as shown below
 
-```
+```swift
 override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 
    if senderIsSegueCompletionBlock(sender, segue) { return }
@@ -151,7 +151,7 @@ One major improvement to ```SegueIdentifier``` would be for the destination view
 
 As you can see below, currently we are required to manually cast the destination view controller
 
-```
+```swift
 performSegue( .ProfileViewController) { (segue, destination) in
    guard let profileViewController = destination as? ProfileViewController  else { return }
 }
@@ -160,27 +160,27 @@ performSegue( .ProfileViewController) { (segue, destination) in
 This should easily be solved with generics by updating the protocol as so:
 
 **Change this**
-```
+```swift
 typealias SegueCompletionBlock = (UIStoryboardSegue, UIViewController) -> Void
 ```
 
 **To this**
-```
+```swift
 typealias SegueCompletionBlock<T: UIViewController> = (UIStoryboardSegue, T) -> Void
 ```
 
 **Change this**
-```
+```swift
 func performSegue(_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock? = nil)
 ```
 
 **To this**
-```
+```swift
 func performSegue<T: UIViewController>(_ type: T.Type,_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock<T>? = nil)
 ```
 
 This call will now look like this:
-```
+```swift
 performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
 
 }
