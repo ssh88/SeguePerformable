@@ -61,7 +61,7 @@ Next we will look at how these enums are used to trigger segues.
 
 Using the above ```SegueIdentifier``` enum, below we look at how triggering segues have been improved using closures.
 
-**Previously**
+*Previously*
 
 Previously to display a view controller and override a parameter you would do the following
 
@@ -83,7 +83,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
    }
 }
 ```
-**Now**
+*Now*
 
 This has now been replaced with a simple call.
 
