@@ -185,7 +185,7 @@ performSegue(ProfileViewController.self, .ProfileViewController) { (segue, desti
 
 }
 ```
-The destination parameter will now already by of type ```ProfileViewController```, removing the need for the ```guard```.
+The destination parameter will now already be of type ```ProfileViewController```, removing the need for the ```guard```.
 
 However the ```senderIsSegueCompletionBlock``` function will not recognise the ```SegueCompletionBlock``` if ```T``` is not of type ```UIViewController```. Even if ```T``` is a child of ```UIViewController```, swift doesnt successfully equate the two at runtime.
 
