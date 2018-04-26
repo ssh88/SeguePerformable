@@ -20,7 +20,8 @@ Saying that, there has been one major feature missing that still has developers 
 
 What makes this even more of a painful omission is the fact that if you want to override and default parameters before displaying your view controller you are forced to
 
-- call ```swift prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```
+- call ```swift
+prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```
 - then navigate an ```if``` statment to find the correct id for your view controller
 - then finally cast back your view controller from the segues destination view controller.
 
