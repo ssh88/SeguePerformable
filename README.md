@@ -18,7 +18,7 @@ With all the pros from dynamic cells, size classes and easy-to-setup navigation,
 
 Saying that, there has been one major feature missing that still has developers reminiscing about life before the UIStoryboard - Custom initialisers!
 
-What makes this even more of a painful omission is the fact that if you want to override and default parameters before displaying your view controller you are forced to
+What makes this even more of a painful omission is the fact that if you want to override any default parameters before displaying your view controller you are forced to
 
 - call ```prepare(for:sender:)``` separately from ```performSegue(withIdentifier:sender:)```
 - then navigate an ```if``` statment to find the correct id for your view controller
