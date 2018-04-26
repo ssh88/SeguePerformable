@@ -189,7 +189,7 @@ The destination parameter will now already be of type ```ProfileViewController``
 
 However the ```senderIsSegueCompletionBlock``` function will not recognise the ```SegueCompletionBlock``` if ```T``` is not of type ```UIViewController```. Even if ```T``` is a child of ```UIViewController```, swift doesnt successfully equate the two at runtime.
 
-If anyone knows how to overcome this, PLEASE RAISE A PULL REQUEST :)
+If anyone knows how to overcome this, **PLEASE RAISE A PULL REQUEST** :)
 
 ### Requirements
 
