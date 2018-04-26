@@ -143,7 +143,7 @@ The line ```switch segueIdentifier(for: segue)``` creates a ```SegueIdentifier``
 
 ##### Objective-C
 
-Due to the use of Protocol extensions, ```SegueIdentifier``` can not called from Objective-C. Swift can however use it to trigger a segue whos destination view controller is an Obj-c class.
+Due to the use of Protocol extensions, ```SegueIdentifier``` can not be called from Objective-C. Swift can however use it to trigger a segue whos destination view controller is an Obj-c class.
 
 ##### Generics
 
