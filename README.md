@@ -41,7 +41,7 @@ First lets look at how we replace strings with enums when dealing with segue id'
 
 Firstly the view controller that is initiating the navigating i.e. the parent view controller, should conform to the protocol.
 
-```
+```swift
 class MyViewController: UIViewController, SeguePerformable {
 ```
 The view controller will now need to declare an enum named ```SegueIdentifier``` of type ```String```
