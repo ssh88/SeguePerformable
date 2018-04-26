@@ -82,7 +82,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       //bla bla
    }
 }
-```swift
+```
 **Now**
 
 This has now been replaced with a simple call.
