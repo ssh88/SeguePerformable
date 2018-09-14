@@ -89,16 +89,16 @@ This has now been replaced with a simple call.
 
 ```swift
 func viewProfile() {
-   performSegue( .ProfileViewController) { (segue, destination) in
-      guard let profileViewController = destination as? ProfileViewController  else { return }
-      profileViewController.user = user
+   performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
+      destination.user = user
    }
 }
 ```
 
-Notice we no longer use a string as the segue identifier but our new ```SegueIdentifier``` enum value.
+Notice that not only do we no longer use a string as the segue identifier as our new ```SegueIdentifier``` enum value, but thanks to the generic nature of the function call, destination is already of the correct type so we do not need to cast it to ProfileViewController
 
-Also the ```sender:``` parameter is no longer needed as we can override our view controller parameters immediately.
+Finally the ```sender:``` parameter is no longer needed as we can now override our view controller parameters immediately in the closure.
+
 
 There is one caveat to get this working smoothly. In ```prepare(for:sender:)``` we have to include the following line:
 
@@ -111,7 +111,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 }
 ```
 
-This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function.
+This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function, if it is the protocol extension will automatically call the completion block.
 
 #### Embedded Segues / Container Views
 
@@ -139,57 +139,7 @@ The above example shows a view controller ```SettingsViewController``` which is 
 
 The line ```switch segueIdentifier(for: segue)``` creates a ```SegueIdentifier``` enum value from the UIStoryboardSegue, allowing us to now switch on the ```SegueIdentifier``` to determine which embedded segue triggered this call.
 
-#### Limitations & Future Improvements
-
-##### Objective-C
-
-Due to the use of Protocol extensions, ```SegueIdentifier``` can not be called from Objective-C. Swift can however use it to trigger a segue whos destination view controller is an Obj-c class.
-
-##### Generics
-
-One major improvement to ```SegueIdentifier``` would be for the destination view controller to already be recognised as the intended class type.
-
-As you can see below, currently we are required to manually cast the destination view controller
-
-```swift
-performSegue( .ProfileViewController) { (segue, destination) in
-   guard let profileViewController = destination as? ProfileViewController  else { return }
-}
-```
-
-This should easily be solved with generics by updating the protocol as so:
-
-**Change this**
-```swift
-typealias SegueCompletionBlock = (UIStoryboardSegue, UIViewController) -> Void
-```
-
-**To this**
-```swift
-typealias SegueCompletionBlock<T: UIViewController> = (UIStoryboardSegue, T) -> Void
-```
-
-**Change this**
-```swift
-func performSegue(_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock? = nil)
-```
-
-**To this**
-```swift
-func performSegue<T: UIViewController>(_ type: T.Type,_ segueIdentifier: SegueIdentifier, completion: SegueCompletionBlock<T>? = nil)
-```
-
-This call will now look like this:
-```swift
-performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
-
-}
-```
-The destination parameter will now already be of type ```ProfileViewController```, removing the need for the ```guard```.
-
-However the ```senderIsSegueCompletionBlock``` function will not recognise the ```SegueCompletionBlock``` if ```T``` is not of type ```UIViewController```. Even if ```T``` is a child of ```UIViewController```, swift doesnt successfully equate the two at runtime.
-
-If anyone knows how to overcome this, **PLEASE RAISE A PULL REQUEST** :)
+Enjoy!
 
 ### Requirements
 
