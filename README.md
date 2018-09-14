@@ -88,10 +88,8 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 This has now been replaced with a simple call.
 
 ```swift
-func viewProfile() {
-   performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
-      destination.user = user
-   }
+performSegue(ProfileViewController.self, .ProfileViewController) { (segue, destination) in
+     destination.user = user
 }
 ```
 
