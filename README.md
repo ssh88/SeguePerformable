@@ -107,7 +107,7 @@ override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
 }
 ```
 
-This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function, if it is the protocol extension will automatically call the completion block.
+This checks if the sender is the completion block we passed in when calling our new ```performSegue``` function, if it is the protocol extension will automatically execute the completion block.
 
 #### Embedded Segues / Container Views
 
